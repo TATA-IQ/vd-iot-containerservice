@@ -1,0 +1,11 @@
+{
+    "api_list":{
+        "container_insert":"http://localhost:8000/insertContainer",
+        "containermodel_insert":"http://localhost:8000/insertContainerModel",
+        "Exist_ContainerModelName":"http://localhost:8000/existContainerModelName",
+        "Exist_ContainerName":"http://localhost:8000/existContainerName",
+        "update_container":"http://localhost:8000/updateContainer"
+        
+
+    }
+}
