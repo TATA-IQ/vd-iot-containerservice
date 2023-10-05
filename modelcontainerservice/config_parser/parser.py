@@ -1,20 +1,19 @@
 import json
 import os
+
+
 class ParseConfig(object):
-    config_data=None
+    config_data = None
+
     def __init__(self):
-        
-        
-        self.config_data=None
-        
+        self.config_data = None
+
     @staticmethod
-    
-    def readFile(config_path='./config/config.json'):
-        
+    def readFile(config_path="./config/config.json"):
         with open(config_path) as f:
-            print(os.listdir('./'))
-            ParseConfig.config_data=json.load(f)
-    
+            print(os.listdir("./"))
+            ParseConfig.config_data = json.load(f)
+
     @staticmethod
     def getapi():
         print("<=====Parsing DB COnfig=====>")

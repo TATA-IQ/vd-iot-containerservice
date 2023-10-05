@@ -1,0 +1,22 @@
+giturls:
+  detection:
+    yolov5: 
+      url: "git@ssh.dev.azure.com:v3/tatacommiot/Video%20Based%20IoT/vd-iot-yolov5detectionservice"
+      branch: "development"
+    yolov8: 
+      url: "git@ssh.dev.azure.com:v3/tatacommiot/Video%20Based%20IoT/vd-iot-yolov8detectionservice"
+      branch: "development"
+    tensorflow:
+      url: "git@ssh.dev.azure.com:v3/tatacommiot/Video%20Based%20IoT/vd-iot-tfdetectionservice"
+      branch: "development"
+    paddleocr:
+      url: "git@ssh.dev.azure.com:v3/tatacommiot/Video%20Based%20IoT/vd-iot-paddleocrservice"
+      branch: "development"
+  
+
+apis:
+  port_details: "http://localhost:8000/ports"
+  update_port: "http://127.0.0.1:8000/updateports"
+  model_config: "http://127.0.0.1:8000/getModelMasterbyId"
+
+local_repo_path: "/data/models"
