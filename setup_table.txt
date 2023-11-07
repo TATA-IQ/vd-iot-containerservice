@@ -1,0 +1,24 @@
+use `tcl-dev`;
+
+CREATE TABLE `port_model` (
+  `port_number` int NOT NULL,
+  `model_id` int DEFAULT NULL,
+  `used_status` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`port_number`),
+  KEY `model_id` (`model_id`),
+  CONSTRAINT `port_model_ibfk_1` FOREIGN KEY (`model_id`) REFERENCES `model` (`model_id`)
+)
+
+delimiter //
+CREATE PROCEDURE InsertPort()
+BEGIN
+    DECLARE counter INT DEFAULT 6600;
+
+    WHILE counter <= 7000 DO
+        INSERT INTO port_model (port_number,used_status) VALUES (counter,0);
+        SET counter = counter + 1;
+    END WHILE;
+END
+// delimiter 
+
+call  InsertPort();
