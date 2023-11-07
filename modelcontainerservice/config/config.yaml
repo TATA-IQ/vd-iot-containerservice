@@ -13,6 +13,7 @@ giturls:
       url: "git@ssh.dev.azure.com:v3/tatacommiot/Video%20Based%20IoT/vd-iot-paddleocrservice"
       branch: "development"
   
+"git_ssh_command": 'ssh -i /home/aditya.singh10/.ssh/id_rsa'
 
 apis:
   port_details: "http://172.16.0.204:8051/ports"

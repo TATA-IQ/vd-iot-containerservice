@@ -3,14 +3,15 @@ import subprocess
 import os
 from src.gitcred import GitAuthenticate
 class Build:
-    def __init__(self,api, config, logger=None):
+    def __init__(self,api, config, git_ssh_command,logger=None):
         self.api=api
         self.config=config
+        self.git_ssh_command=git_ssh_command
         self.logger=logger
     def buildModel(self):
 
         git_url = self.config["git_url"]
-        git=GitAuthenticate(git_url,self.config["git_branch"],self.config["local_repo_path"])
+        git=GitAuthenticate(git_url,self.config["git_branch"],self.config["local_repo_path"], self.git_ssh_command)
         try:
             
             # resContainerModel = requests.get(

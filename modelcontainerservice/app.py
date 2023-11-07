@@ -57,6 +57,7 @@ def active_model(model_id):
     
     giturls=conf[0]["giturls"]
     apis=conf[0]["apis"]
+    git_ssh_comand=conf[0]["git_ssh_command"]
     local_repo_path= conf[0]["local_repo_path"]
     # model_id=data.model_id
     port_data=check_port(apis["port_details"],model_id)
@@ -93,7 +94,7 @@ def active_model(model_id):
 
     }
     print("====?",dictdata)
-    buld=Build(apis, dictdata)
+    buld=Build(apis, dictdata,git_ssh_comand)
     response=buld.buildModel()
     return response
 

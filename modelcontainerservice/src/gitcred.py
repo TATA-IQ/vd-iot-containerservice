@@ -2,11 +2,12 @@ from git import Repo
 import yaml
 import os
 class GitAuthenticate:
-    def __init__(self,repo,branch,localpath):
+    def __init__(self,repo,branch,localpath,git_ssh_command):
         print("initili")
         self.repo=repo
         self.branch=branch
         self.path=localpath
+        self.git_ssh_command=git_ssh_command
         #self.url=
     def gitClone(self,foldername):
         print("===Start Clonning====",self.path)
@@ -25,14 +26,14 @@ class GitAuthenticate:
                 print("===clonng====")
                 repo_folder=self.path+"/"+foldername
                 print("===clonng====",repo_folder)
-                repo = Repo.clone_from(self.repo, repo_folder, env={"GIT_SSH_COMMAND": 'ssh -i /home/aditya.singh10/.ssh/id_rsa'},branch=self.branch)
+                repo = Repo.clone_from(self.repo, repo_folder, env={"GIT_SSH_COMMAND": self.git_ssh_command},branch=self.branch)
                 return True
         else:
             print("====inside else==",self.path,foldername)
             os.mkdir(self.path+"/"+foldername)
             repo_folder=self.path+"/"+foldername
             print("===clonng====",repo_folder)
-            repo = Repo.clone_from(self.repo,repo_folder, env={"GIT_SSH_COMMAND": 'ssh -i /home/aditya.singh10/.ssh/id_rsa'},branch=self.branch)
+            repo = Repo.clone_from(self.repo,repo_folder, env={"GIT_SSH_COMMAND": self.git_ssh_command},branch=self.branch)
             return True
     # def getgitFolder(self,foldername,path="/data"):
     #     filelist=os.listdir(path+"/"+foldername)
