@@ -15,8 +15,8 @@ giturls:
   
 
 apis:
-  port_details: "http://localhost:8000/ports"
-  update_port: "http://127.0.0.1:8000/updateports"
-  model_config: "http://127.0.0.1:8000/getModelMasterbyId"
+  port_details: "http://172.16.0.204:8051/ports"
+  update_port: "http://172.16.0.204:8051/updateports"
+  model_config: "http://172.16.0.204:8051/getModelMasterbyId"
 
 local_repo_path: "/data/models"
