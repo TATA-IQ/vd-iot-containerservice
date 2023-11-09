@@ -155,6 +155,7 @@ def stop_container(model_id):
 
 @app.post("/container-service/container")
 def call_contatiner_service(data:RequestModel):
+    print("===Request data====",data)
     model_id=data.model_id
     action=data.action
     
