@@ -169,6 +169,8 @@ def call_contatiner_service(data:RequestModel):
     if action== "stop":
         response=stop_container(model_id)
 
+    print("=====Response=====",response)
+
 
     return response    
     
