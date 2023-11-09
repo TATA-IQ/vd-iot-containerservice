@@ -108,6 +108,7 @@ def get_docer_status(model_id):
     client = docker.from_env()
     print("cotainer name:=>",container_name)
     container_list=client.containers.list(filters={"name":container_name})
+    print("====container_list=====",container_list)
     if len(container_list)==0:
         return {"data":{"status":"not found","message":"container does not exist"}}
     else:
@@ -116,6 +117,7 @@ def get_docer_status(model_id):
             return {"data":{"status":status,"message":"container running"}}
         else:
             return {"data":{"status":status,"message":"container stopped"}}
+    return {"data":{"status":"not found","message":"container does not exist"}}
 
 
 
