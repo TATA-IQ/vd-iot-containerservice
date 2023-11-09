@@ -101,6 +101,7 @@ def active_model(model_id):
 
 def get_docer_status(model_id):
     # model_id=data.model_id
+    print("====checking status=====",model_id)
     apis=conf[0]["apis"]
     model_conf=get_model_config(apis["model_config"],model_id)[0]
     container_name=str(model_conf["model_id"])+"_"+str(model_conf["model_framework"])+"_"+str(model_conf["model_name"])
