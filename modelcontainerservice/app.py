@@ -110,14 +110,14 @@ def get_docer_status(model_id):
     container_list=client.containers.list(filters={"name":container_name})
     print("====container_list=====",container_list)
     if len(container_list)==0:
-        return {"data":{"status":0,"message":"container does not exist"}}
+        return {"status":0,"message":"container does not exist"}
     else:
         status=container_list[0].status
         if status=="running":
-            return {"data":{"status":1,"message":"container running"}}
+            return {"status":1,"message":"container running"}
         else:
-            return {"data":{"status":1,"message":"container stopped"}}
-    return {"data":{"status":0,"message":"container does not exist"}}
+            return {"status":1,"message":"container stopped"}
+    return {"status":0,"message":"container does not exist"}
 
 
 
@@ -131,14 +131,14 @@ def stop_container(model_id):
     container_list=client.containers.list(filters={"name":container_name})
 
     if len(container_list)==0:
-        return {"data":{"status":0,"message":"container does not exist"}}
+        return {"status":0,"message":"container does not exist"}
     else:
         status=container_list[0].status
         if status=="running":
-            return {"data":{"status":1,"message":"container running"}}
+            return {"status":1,"message":"container running"}
         else:
-            return {"data":{"status":1,"message":"container stopped"}}
-    return {"data":{"status":0,"message":"container does not exist"}}
+            return {"status":1,"message":"container stopped"}
+    return {"status":0,"message":"container does not exist"}
 
 
 
