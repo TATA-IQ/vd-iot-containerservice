@@ -131,28 +131,14 @@ def stop_container(model_id):
     container_list=client.containers.list(filters={"name":container_name})
 
     if len(container_list)==0:
-        return {"data":{"status":"not found","message":"container does not exist"}}
+        return {"data":{"status":0,"message":"container does not exist"}}
     else:
-        try:
-            container_list[0].kill()
-            return {
-                "data":{
-
-                    "status":"killed",
-                    "message":" container killed"
-                }
-
-            }
-        except Exception as ex:
-            return {
-                "data":{
-
-                    "status":"error",
-                    "message":ex
-                }
-
-            }
-
+        status=container_list[0].status
+        if status=="running":
+            return {"data":{"status":1,"message":"container running"}}
+        else:
+            return {"data":{"status":1,"message":"container stopped"}}
+    return {"data":{"status":0,"message":"container does not exist"}}
 
 
 
