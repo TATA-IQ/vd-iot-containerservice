@@ -41,7 +41,7 @@ def get_model_config(url,model_id):
 
 def update_port(url,model_id,port_number):
     print(f"update for model id port {model_id} {port_number}")
-    response=requests.post(url=url,json={"model_id":model_id,"port_number":port_number})
+    response=requests.post(url=url,json={"model_id":model_id,"model_port":port_number})
     print("============pdate data=========")
     print(response.text)
 
