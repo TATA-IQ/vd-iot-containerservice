@@ -24,6 +24,7 @@ class Build:
             #isContainerexist = resContainer.json()["self.config"]
             print("Check ing com")
             self.configinsert=self.config
+            self.config["model_name"] = "".join(self.config["model_name"].strip().lower().split())
             model_directory=self.config["local_repo_path"]+"/"+self.config["model_id"]+"_"+self.config["model_framework"]+"_"+self.config["model_name"]
             foldername=self.config["model_id"]+"_"+self.config["model_framework"]+"_"+self.config["model_name"]
             foldername = "".join(foldername.strip().lower().split())
