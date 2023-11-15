@@ -26,9 +26,11 @@ class Build:
             self.configinsert=self.config
             model_directory=self.config["local_repo_path"]+"/"+self.config["model_id"]+"_"+self.config["model_framework"]+"_"+self.config["model_name"]
             foldername=self.config["model_id"]+"_"+self.config["model_framework"]+"_"+self.config["model_name"]
-            
+            foldername = "".join(foldername.strip().lower().split())
             container_tag=self.config["model_id"]+"_"+self.config["model_framework"]+"_"+self.config["model_name"]
             container_name=self.config["model_id"]+"_"+self.config["model_framework"]+"_"+self.config["model_name"]
+            container_tag = "".join(container_tag.strip().lower().split())
+            container_name = "".join(container_name.strip().lower().split())
             print("Writing COntainer ",container_name)
             print("Path==>",self.config["git_url"])
             git.gitClone(foldername)
@@ -81,6 +83,7 @@ class Build:
             )
             return {"data": {"status":1,"message":"model starting"}}
         except Exception as ex:
+            print("unsuccessfull gitclone")
             return {"data": {"status":0,"message":"model starting"}}
 
         # check if container table have model with same container_nm
