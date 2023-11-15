@@ -27,6 +27,7 @@ class GitAuthenticate:
                 repo_folder=self.path+"/"+foldername
                 print("===clonng====",repo_folder)
                 repo = Repo.clone_from(self.repo, repo_folder, env={"GIT_SSH_COMMAND": self.git_ssh_command},branch=self.branch)
+                print("===clonned===")
                 return True
         else:
             print("====inside else==",self.path,foldername)
