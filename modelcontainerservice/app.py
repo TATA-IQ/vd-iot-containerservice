@@ -105,8 +105,9 @@ def get_docer_status(model_id):
     apis=conf[0]["apis"]
     model_conf=get_model_config(apis["model_config"],model_id)[0]
     container_name=str(model_conf["model_id"])+"_"+str(model_conf["model_framework"])+"_"+str(model_conf["model_name"])
-    client = docker.from_env()
+    container_name = "".join(container_name.strip().lower().split())
     print("cotainer name:=>",container_name)
+    client = docker.from_env()
     container_list=client.containers.list(filters={"name":container_name})
     print("====container_list=====",container_list)
     if len(container_list)==0:
@@ -126,6 +127,7 @@ def stop_container(model_id):
     apis=conf[0]["apis"]
     model_conf=get_model_config(apis["model_config"],model_id)[0]
     container_name=str(model_conf["model_id"])+"_"+str(model_conf["model_framework"])+"_"+str(model_conf["model_name"])
+    container_name = "".join(container_name.strip().lower().split())
     client = docker.from_env()
     
     container_list=client.containers.list(filters={"name":container_name})
