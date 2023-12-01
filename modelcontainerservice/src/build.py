@@ -1,12 +1,17 @@
 import requests
 import subprocess
 import os
+import stat
 from src.gitcred import GitAuthenticate
+from src.update_model_status import model_status
+from src.docker_check import docker_check
+
 class Build:
     def __init__(self,api, config, git_ssh_command,logger=None):
         self.api=api
         self.config=config
         self.git_ssh_command=git_ssh_command
+        self.modelupdate_url = self.api["update_model_status"]
         self.logger=logger
     def buildModel(self):
 
@@ -34,15 +39,20 @@ class Build:
             container_name = "".join(container_name.strip().lower().split())
             print("Writing COntainer ",container_name)
             print("Path==>",self.config["git_url"])
+            model_status.update(self.modelupdate_url, self.config["model_id"], 0, "model clone started")
             git.gitClone(foldername)
             #gitfoldername=ga.getgitFolder(foldername)
-            print("====Folde Name====",foldername)
+            print("====Folder Name====",foldername)
             
             model_config={"model_id":self.config["model_id"],"model_container":container_name,"port":self.config["model_port"],"framework":self.config["model_framework"]}
             print(model_config)
             git.writeConfig(foldername,model_config,self.config)
+            model_status.update(self.modelupdate_url, self.config["model_id"], 0, "model clone completed")
             print("=====config write====")
-            with open(container_name + ".sh", "w") as f:
+            # print(self.config)
+            shell_scripts_folder = self.config['shell_scripts_path']
+            os.makedirs(shell_scripts_folder, exist_ok=True)
+            with open(shell_scripts_folder+"/"+container_name + ".sh", "w") as f:
                 f.write("#!/bin/sh \n")
                 #f.write("mkdir "+model_directory+"\n")
                 f.write("cd "+model_directory+"\n")
@@ -55,8 +65,13 @@ class Build:
                 # file=open("config/model.yaml","w")
                 # yaml.dump(employee_dict,file)
                 # file.close()
-                print("====docker build====")
+                print("====docker build is in progress====")
+                model_status.update(self.modelupdate_url, self.config["model_id"], 0, "docker build is in progress")
+
                 f.write("docker build -t " + container_tag + " .\n")
+                print("=====docker build successful=====")
+                
+                # model_status.update(self.modelupdate_url, self.config["model_id"], 0, "docker build successful")
                 f.write("docker rm -f " + container_name + "\n")
                 print("=====running docker=====")
                 print(container_name)
@@ -73,8 +88,9 @@ class Build:
                     + "\n"
                 )
             print("======docker run=====")
+            
             print("Calling SUbprocess==>", container_name)
-            subprocess.call(["sh", "./" + container_name + ".sh"])
+            subprocess.call(["sh", shell_scripts_folder +"/"+ container_name + ".sh"])
             #subprocess.call(['sh', './'+"cn1"+'.sh'])
 
             print("Called")
@@ -82,10 +98,18 @@ class Build:
             outid = subprocess.getoutput(
                 "docker ps -aqf name=" + container_name
             )
+            
+            print("=====is docker runnning====",docker_check.running_status(container_name))
+            if docker_check.running_status(container_name):
+                model_status.update(self.modelupdate_url, self.config["model_id"], 1, "model docker is up and running")
+            if not docker_check.running_status(container_name):
+                print("docker is not running")
+                model_status.update(self.modelupdate_url, self.config["model_id"], 0, "model docker build failed")
             return {"data": {"status":1,"message":"model starting"}}
-        except Exception as ex:
-            print("unsuccessfull gitclone")
-            return {"data": {"status":0,"message":"model starting"}}
+        except Exception as exp:
+            print("unsuccessfull clone", exp)
+            model_status.update(self.modelupdate_url, self.config["model_id"], 0, "model git clone unsuccesful")
+            return {"data": {"status":0,"message":"unsuccessfull clone, model start failed"}}
 
         # check if container table have model with same container_nm
         # if yes rebuild
