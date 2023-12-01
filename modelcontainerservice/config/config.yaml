@@ -2,16 +2,16 @@ giturls:
   detection:
     yolov5: 
       url: "git@ssh.dev.azure.com:v3/tatacommiot/Video%20Based%20IoT/vd-iot-yolov5detectionservice"
-      branch: "test"
+      branch: "integration"
     yolov8: 
       url: "git@ssh.dev.azure.com:v3/tatacommiot/Video%20Based%20IoT/vd-iot-yolov8detectionservice"
-      branch: "test"
+      branch: "integration"
     tensorflow:
       url: "git@ssh.dev.azure.com:v3/tatacommiot/Video%20Based%20IoT/vd-iot-tfdetectionservice"
-      branch: "test"
+      branch: "integration"
     paddleocr:
       url: "git@ssh.dev.azure.com:v3/tatacommiot/Video%20Based%20IoT/vd-iot-paddleocrservice"
-      branch: "test"
+      branch: "integration"
   
 "git_ssh_command": 'ssh -i /root/.ssh/id_rsa'
 
