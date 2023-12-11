@@ -1,23 +1,10 @@
-giturls:
-  detection:
-    yolov5: 
-      url: "git@ssh.dev.azure.com:v3/tatacommiot/Video%20Based%20IoT/vd-iot-yolov5detectionservice"
-      branch: "test"
-    yolov8: 
-      url: "git@ssh.dev.azure.com:v3/tatacommiot/Video%20Based%20IoT/vd-iot-yolov8detectionservice"
-      branch: "test"
-    tensorflow:
-      url: "git@ssh.dev.azure.com:v3/tatacommiot/Video%20Based%20IoT/vd-iot-tfdetectionservice"
-      branch: "test"
-    paddleocr:
-      url: "git@ssh.dev.azure.com:v3/tatacommiot/Video%20Based%20IoT/vd-iot-paddleocrservice"
-      branch: "test"
-  
-"git_ssh_command": 'ssh -i /root/.ssh/id_rsa'
 
-apis:
-  port_details: "http://10.0.153.141:8000/ports"
-  update_port: "http://10.0.153.141:8000/updateports"
-  model_config: "http://10.0.153.141:8000/getModelMasterbyId"
 
-local_repo_path: "/data/models"
+consul_url: http://consul.service.consul:8500/v1/agent/services
+
+
+# # configurl:
+# #   host: http://pipelineconfig.service.consul
+# #   port: 8000
+# #   endpoint: config/containerservice
+# dburl:

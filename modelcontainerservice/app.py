@@ -8,8 +8,9 @@ from src.parser import Config
 from model.port_model import PortModel
 import docker
 from model.request_model import RequestModel
-
-
+import requests
+import consul
+import socket
 
 logger = logging.getLogger("Rotating Log")
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -19,10 +20,61 @@ logger.setLevel(logging.ERROR)
 handler = TimedRotatingFileHandler("logs/log", "D", 1, 7)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
-logger.log(40, msg="Database Started")
+logger.log(40, msg="Container Service Started")
 
 conf=Config.yamlconfig("config/config.yaml")
+# consul_conf=conf[0]["consul"]
+# service_conf=conf[0]["register_service"]
+
 app=FastAPI()
+def register_service(consul_conf,port):
+    name=socket.gethostname()
+    local_ip=socket.gethostbyname(socket.gethostname())
+    consul_client = consul.Consul(host=consul_conf["host"],port=consul_conf["port"])
+    consul_client.agent.service.register(
+    "containerservice",service_id=name,
+    port=port,
+    address=local_ip,
+    tags=["python","container_service"]
+)
+
+def get_confdata():
+    res=requests.get(conf[0]["consul_url"])
+    data=res.json()
+    dbconf =None
+    containerconf=None
+    consul_conf=None
+    env=None
+    if "pipelineconfig" in data:
+        port=data["pipelineconfig"]["Port"]
+        while True:
+            endpoints=requests.get("http://pipelineconfig.service.consul:"+str(port)+"/").json()
+            
+            if "containerservice" in endpoints:
+                try:
+                    containerconf=requests.get("http://pipelineconfig.service.consul:"+str(port)+"/"+endpoints["endpoint"]["containerservice"]).json()
+                except:
+                    time.sleep(5)
+                    continue
+            if "dbapi" in endpoints and "dbapi" in data:
+                try:
+                    dbconf=requests.get("http://pipelineconfig.service.consul:"+str(port)+"/"+endpoints["endpoint"]["dbapi"]).json()
+                except:
+                    time.sleep(5)
+                    continue
+            if "consul" in endpoints["endpoint"]:
+                try:
+                    consul_conf=requests.get("http://pipelineconfig.service.consul:"+str(port)+"/"+endpoints["endpoint"]["consul"]).json()
+                except Exception as ex:
+                    print(ex)
+                    time.sleep(5)
+                    continue
+            if dbconf is not None and containerconf is not None:
+                break
+    return  dbconf,containerconf, consul_conf
+
+
+
 
 
 
@@ -55,10 +107,10 @@ def update_port(url,model_id,port_number):
 def active_model(model_id):
     print("======Requestmodel====")
     
-    giturls=conf[0]["giturls"]
-    apis=conf[0]["apis"]
-    git_ssh_comand=conf[0]["git_ssh_command"]
-    local_repo_path= conf[0]["local_repo_path"]
+    giturls=containerconf[0]["giturls"]
+    apis=apiconf[0]["apis"]
+    git_ssh_comand=containerconf[0]["git_ssh_command"]
+    local_repo_path= containerconf[0]["local_repo_path"]
     # model_id=data.model_id
     port_data=check_port(apis["port_details"],model_id)
     model_conf=get_model_config(apis["model_config"],model_id)[0]
@@ -102,7 +154,7 @@ def active_model(model_id):
 def get_docer_status(model_id):
     # model_id=data.model_id
     print("====checking status=====",model_id)
-    apis=conf[0]["apis"]
+    apis=apiconf[0]["apis"]
     model_conf=get_model_config(apis["model_config"],model_id)[0]
     container_name=str(model_conf["model_id"])+"_"+str(model_conf["model_framework"])+"_"+str(model_conf["model_name"])
     container_name = "".join(container_name.strip().lower().split())
@@ -124,7 +176,8 @@ def get_docer_status(model_id):
 
 def stop_container(model_id):
     model_id=model_id
-    apis=conf[0]["apis"]
+    
+    apis=apiconf[0]["apis"]
     model_conf=get_model_config(apis["model_config"],model_id)[0]
     container_name=str(model_conf["model_id"])+"_"+str(model_conf["model_framework"])+"_"+str(model_conf["model_name"])
     container_name = "".join(container_name.strip().lower().split())
@@ -143,6 +196,9 @@ def stop_container(model_id):
     return {"status":0,"message":"container does not exist"}
 
 
+# register_service(consul_conf)
+apiconf, containerconf,consul_conf=get_confdata()
+register_service(consul_conf,containerconf["port"])
 
 @app.post("/container-service/container")
 def call_contatiner_service(data:RequestModel):
