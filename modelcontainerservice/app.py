@@ -114,18 +114,13 @@ def update_port(url,model_id,port_number):
 def active_model(model_id):
     print("======Requestmodel====")
     
-<<<<<<< HEAD
+
     giturls=containerconf[0]["giturls"]
     apis=apiconf[0]["apis"]
     git_ssh_comand=containerconf[0]["git_ssh_command"]
     local_repo_path= containerconf[0]["local_repo_path"]
-=======
-    giturls=conf[0]["giturls"]
-    apis=conf[0]["apis"]
-    git_ssh_comand=conf[0]["git_ssh_command"]
-    local_repo_path= conf[0]["local_repo_path"]
-    shell_scripts_path= conf[0]["shell_scripts_path"]
->>>>>>> 725cad6c2c469c2abd22e48e8e2fe573205e47e1
+    shell_scripts_path= containerconf[0]["shell_scripts_path"]
+
     # model_id=data.model_id
     port_data=check_port(apis["port_details"],model_id)
     model_conf=get_model_config(apis["model_config"],model_id)
