@@ -11,7 +11,7 @@ from model.request_model import RequestModel
 import requests
 import consul
 import socket
-
+import time
 logger = logging.getLogger("Rotating Log")
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
@@ -23,8 +23,8 @@ logger.addHandler(handler)
 logger.log(40, msg="Container Service Started")
 
 conf=Config.yamlconfig("config/config.yaml")
-# consul_conf=conf[0]["consul"]
-# service_conf=conf[0]["register_service"]
+consul_conf=conf[0]["consul"]
+
 
 app=FastAPI()
 def register_service(consul_conf,port):
@@ -32,46 +32,85 @@ def register_service(consul_conf,port):
     local_ip=socket.gethostbyname(socket.gethostname())
     consul_client = consul.Consul(host=consul_conf["host"],port=consul_conf["port"])
     consul_client.agent.service.register(
-    "containerservice",service_id=name,
+    "containerservice",service_id=name+"=containerservice-"+consul_conf["env"],
     port=port,
     address=local_ip,
-    tags=["python","container_service"]
+    tags=["python","container_service",consul_conf["env"]]
 )
 
-def get_confdata():
-    res=requests.get(conf[0]["consul_url"])
-    data=res.json()
-    dbconf =None
-    containerconf=None
-    consul_conf=None
-    env=None
-    if "pipelineconfig" in data:
-        port=data["pipelineconfig"]["Port"]
-        while True:
-            endpoints=requests.get("http://pipelineconfig.service.consul:"+str(port)+"/").json()
+def get_service_address(consul_client,service_name,env):
+    while True:
+        
+        try:
+            services=consul_client.catalog.service(service_name)[1]
+            print(services)
+            for i in services:
+                if env == i["ServiceID"].split("-")[:-1]:
+                    return i
+        except:
+            time.sleep(10)
+            continue
             
-            if "containerservice" in endpoints:
-                try:
-                    containerconf=requests.get("http://pipelineconfig.service.consul:"+str(port)+"/"+endpoints["endpoint"]["containerservice"]).json()
-                except:
-                    time.sleep(5)
-                    continue
-            if "dbapi" in endpoints and "dbapi" in data:
-                try:
-                    dbconf=requests.get("http://pipelineconfig.service.consul:"+str(port)+"/"+endpoints["endpoint"]["dbapi"]).json()
-                except:
-                    time.sleep(5)
-                    continue
-            if "consul" in endpoints["endpoint"]:
-                try:
-                    consul_conf=requests.get("http://pipelineconfig.service.consul:"+str(port)+"/"+endpoints["endpoint"]["consul"]).json()
-                except Exception as ex:
-                    print(ex)
-                    time.sleep(5)
-                    continue
-            if dbconf is not None and containerconf is not None:
-                break
-    return  dbconf,containerconf, consul_conf
+def get_confdata(consul_conf):
+    consul_client = consul.Consul(host=consul_conf["host"],port=consul_conf["port"])
+    pipelineconf=get_service_address(consul_client,"pipelineconfig",consul_conf["env"])
+
+    
+    
+    env=consul_conf["env"]
+    
+    endpoint_addr="http://"+pipelineconf["ServiceAddress"]+":"+str(pipelineconf["ServicePort"])
+    print("endpoint addr====",endpoint_addr)
+    while True:
+        
+        try:
+            res=requests.get(endpoint_addr+"/")
+            endpoints=res.json()
+            print("===got endpoints===",endpoints)
+            break
+        except Exception as ex:
+            print("endpoint exception==>",ex)
+            time.sleep(10)
+            continue
+    
+    while True:
+        try:
+            res=requests.get(endpoint_addr+endpoints["endpoint"]["containerservice"])
+            containerconf=res.json()
+            print("containerconf===>",containerconf)
+            break
+            
+
+        except Exception as ex:
+            print("containerconf exception==>",ex)
+            time.sleep(10)
+            continue
+    print("=======searching for dbapi====")
+    while True:
+        try:
+            print("=====consul search====")
+            dbconf=get_service_address(consul_client,"dbapi",consul_conf["env"])
+            print("****",dbconf)
+            dbhost=dbconf["ServiceAddress"]
+            dbport=dbconf["ServicePort"]
+            res=requests.get(endpoint_addr+endpoints["endpoint"]["dbapi"])
+            dbres=res.json()
+            print("===got db conf===")
+            print(dbres)
+            break
+        except Exception as ex:
+            print("db discovery exception===",ex)
+            time.sleep(10)
+            continue
+    for i in dbres["apis"]:
+        print("====>",i)
+        dbres["apis"][i]="http://"+dbhost+":"+str(dbport)+dbres["apis"][i]
+
+    
+    print("======dbres======")
+    print(dbres)
+    print(containerconf)
+    return  dbres,containerconf
 
 
 
@@ -218,7 +257,7 @@ def stop_container(model_id):
 
 
 # register_service(consul_conf)
-apiconf, containerconf,consul_conf=get_confdata()
+apiconf, containerconf=get_confdata(consul_conf)
 register_service(consul_conf,containerconf["port"])
 
 @app.post("/container-service/container")
