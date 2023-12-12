@@ -1,7 +1,7 @@
 docs/source
-
+__pycache__
 # From https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore
-
+modelcontainerservice/config/config.yaml
  Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -155,7 +155,8 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-
+.yaml
+config.yaml
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore

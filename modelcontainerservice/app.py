@@ -32,7 +32,7 @@ def register_service(consul_conf,port):
     local_ip=socket.gethostbyname(socket.gethostname())
     consul_client = consul.Consul(host=consul_conf["host"],port=consul_conf["port"])
     consul_client.agent.service.register(
-    "containerservice",service_id=name+"=containerservice-"+consul_conf["env"],
+    "containerservice",service_id=name+"-containerservice-"+consul_conf["env"],
     port=port,
     address=local_ip,
     tags=["python","container_service",consul_conf["env"]]
