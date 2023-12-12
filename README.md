@@ -1,20 +1,28 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+This is a repo for Deploying detection services, querying the containers of detection service
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+# How It Works
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+1. Copy the query from setup_table.txt and run it in db
+2. In modelcontainerservice/config/config.yaml, change the configurations like ssh key path and api of services
+3. In config specify the local_repo_path, path where detection services code will reside. 
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+
+
+# Dependency
+1. This Module is dependent on the https://tatacommiot@dev.azure.com/tatacommiot/Video%20Based%20IoT/_git/vd-iot-dataapiservice
+
+
+# Installation
+1. Install Python3.9 
+2. pip install gitpython
+3. pip install "fastapi[all]"
+4. pip install docker
+5. pip install pyyaml
+
+# Run App
+sudo python3 app.py
+
+# Docker 
+Not Required
