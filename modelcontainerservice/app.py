@@ -27,12 +27,29 @@ consul_conf=conf[0]["consul"]
 
 
 app=FastAPI()
+
+def get_local_ip():
+        '''
+        Get the ip of server
+        '''
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            # doesn't even have to be reachable
+            s.connect(("192.255.255.255", 1))
+            IP = s.getsockname()[0]
+        except:
+            IP = "127.0.0.1"
+        finally:
+            s.close()
+        return IP
+
 def register_service(consul_conf,port):
     name=socket.gethostname()
     local_ip=socket.gethostbyname(socket.gethostname())
+    local_ip=get_local_ip()
     consul_client = consul.Consul(host=consul_conf["host"],port=consul_conf["port"])
     consul_client.agent.service.register(
-    "containerservice",service_id=name+"=containerservice-"+consul_conf["env"],
+    "containerservice",service_id=name+"-containerservice-"+consul_conf["env"],
     port=port,
     address=local_ip,
     tags=["python","container_service",consul_conf["env"]]
