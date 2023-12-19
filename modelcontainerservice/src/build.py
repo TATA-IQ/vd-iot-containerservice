@@ -14,7 +14,7 @@ class Build:
         self.modelupdate_url = self.api["update_model_status"]
         self.logger=logger
     def buildModel(self):
-
+        print("in build model",self.config)   
         git_url = self.config["git_url"]
         git=GitAuthenticate(git_url,self.config["git_branch"],self.config["local_repo_path"], self.git_ssh_command)
         try:

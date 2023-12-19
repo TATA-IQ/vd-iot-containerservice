@@ -149,6 +149,7 @@ def check_port(url,model_id=None):
 def get_model_config(url,model_id):
     try:
         response=requests.get(url,json={"model_id":model_id})
+        print("in get model config", response.json())
         return response.json()["data"]
     except Exception as exp:
         print(exp)
@@ -168,14 +169,14 @@ def update_port(url,model_id,port_number):
 
 
 def active_model(model_id):
-    print("======Requestmodel====")
+    print("======Requestmodel====",containerconf)
     
 
-    giturls=containerconf[0]["giturls"]
-    apis=apiconf[0]["apis"]
-    git_ssh_comand=containerconf[0]["git_ssh_command"]
-    local_repo_path= containerconf[0]["local_repo_path"]
-    shell_scripts_path= containerconf[0]["shell_scripts_path"]
+    giturls=containerconf["giturls"]
+    apis=apiconf["apis"]
+    git_ssh_comand=containerconf["git_ssh_command"]
+    local_repo_path= containerconf["local_repo_path"]
+    shell_scripts_path= containerconf["shell_scripts_path"]
 
     # model_id=data.model_id
     port_data=check_port(apis["port_details"],model_id)
@@ -200,6 +201,7 @@ def active_model(model_id):
         return {"status":0,"message":"connection with database is failed"} 
     
     if model_conf != "dbconnectionfailed":
+        print("model_conf====",model_conf)
         model_conf = model_conf[0]
         if model_conf["model_type"].lower()=="object detection":
             model_data=giturls["detection"][model_conf["model_framework"].lower()]
@@ -223,6 +225,7 @@ def active_model(model_id):
 
     }
     print("====?",dictdata)
+    print(f"apis: {apis},git_ssh_comand: {git_ssh_comand}")
     buld=Build(apis, dictdata, git_ssh_comand)
     response=buld.buildModel()
     return response
@@ -231,7 +234,8 @@ def active_model(model_id):
 def get_docer_status(model_id):
     # model_id=data.model_id
     print("====checking status=====",model_id)
-    apis=apiconf[0]["apis"]
+    print("=====apiconf====",apiconf)
+    apis=apiconf["apis"]
     model_conf=get_model_config(apis["model_config"],model_id)[0]
     container_name=str(model_conf["model_id"])+"_"+str(model_conf["model_framework"])+"_"+str(model_conf["model_name"])
     container_name = "".join(container_name.strip().lower().split())
