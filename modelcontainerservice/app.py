@@ -166,13 +166,13 @@ def update_port(url,model_id,port_number):
 
 def active_model(model_id):
     print("======Requestmodel====")
-    
+    print(containerconf)
 
-    giturls=containerconf[0]["giturls"]
-    apis=apiconf[0]["apis"]
-    git_ssh_comand=containerconf[0]["git_ssh_command"]
-    local_repo_path= containerconf[0]["local_repo_path"]
-    shell_scripts_path= containerconf[0]["shell_scripts_path"]
+    giturls=containerconf["giturls"]
+    apis=apiconf["apis"]
+    git_ssh_comand=containerconf["git_ssh_command"]
+    local_repo_path= containerconf["local_repo_path"]
+    shell_scripts_path= containerconf["shell_scripts_path"]
 
     # model_id=data.model_id
     port_data=check_port(apis["port_details"],model_id)
@@ -228,6 +228,7 @@ def active_model(model_id):
 def get_docer_status(model_id):
     # model_id=data.model_id
     print("====checking status=====",model_id)
+    print(apis)
     apis=apiconf[0]["apis"]
     model_conf=get_model_config(apis["model_config"],model_id)[0]
     container_name=str(model_conf["model_id"])+"_"+str(model_conf["model_framework"])+"_"+str(model_conf["model_name"])
@@ -273,6 +274,7 @@ def stop_container(model_id):
 # register_service(consul_conf)
 apiconf, containerconf=get_confdata(consul_conf)
 register_service(consul_conf,containerconf["port"])
+
 
 @app.post("/container-service/container")
 def call_contatiner_service(data:RequestModel):
