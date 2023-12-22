@@ -11,6 +11,7 @@ class GitAuthenticate:
         #self.url=
     def gitClone(self,foldername):
         print("===Start Clonning====",self.path)
+        os.makedirs(self.path, exist_ok=True)
         print(foldername)
         folderlist=os.listdir(self.path)
         print(foldername,folderlist)

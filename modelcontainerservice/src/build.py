@@ -57,7 +57,7 @@ class Build:
                 #f.write("mkdir "+model_directory+"\n")
                 f.write("cd "+model_directory+"\n")
                 f.write("echo model pulling \n")
-                #f.write("git pull ""\n")
+                f.write("git pull ""\n")
                 # folderlist=os.listdir(model_directory)
                 # print("folderlist==>",folderlist)
                 # f.write("cd "+folderlist[0]+"/app")

@@ -148,6 +148,7 @@ def check_port(url,model_id=None):
 
 def get_model_config(url,model_id):
     try:
+        print(f"url: {url}, modelid:{model_id} ")
         response=requests.get(url,json={"model_id":model_id})
         print("in get model config", response.json())
         return response.json()["data"]
