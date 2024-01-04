@@ -259,7 +259,7 @@ def get_docer_status(model_id):
 def stop_container(model_id):
     model_id=model_id
     
-    apis=apiconf[0]["apis"]
+    apis=apiconf["apis"]
     model_conf=get_model_config(apis["model_config"],model_id)[0]
     container_name=str(model_conf["model_id"])+"_"+str(model_conf["model_framework"])+"_"+str(model_conf["model_name"])
     container_name = "".join(container_name.strip().lower().split())
