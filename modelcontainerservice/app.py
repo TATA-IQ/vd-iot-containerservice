@@ -12,6 +12,8 @@ import requests
 import consul
 import socket
 import time
+from console_logging.console import Console
+console=Console()
 logger = logging.getLogger("Rotating Log")
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
@@ -27,6 +29,21 @@ consul_conf=conf[0]["consul"]
 
 
 app=FastAPI()
+
+def check_service_address(consul_client,service_name,env):
+    
+        
+    try:
+        services=consul_client.catalog.service(service_name)[1]
+        console.info(f" Service Extracted from Cosnul For {service_name} : {services}")
+        for i in services:
+            if env == i["ServiceID"].split("-")[-1]:
+                consul_client.agent.service.deregister(i["ServiceID"])
+    except:
+        time.sleep(10)
+        pass
+    return None
+
 def get_local_ip():
         '''
         Get the ip of server
@@ -45,12 +62,15 @@ def register_service(consul_conf,port):
     name=socket.gethostname()
     local_ip=socket.gethostbyname(socket.gethostname())
     consul_client = consul.Consul(host=consul_conf["host"],port=consul_conf["port"])
+    servicestatus=check_service_address(consul_client,"containerservice",consul_conf["env"])
+    
     consul_client.agent.service.register(
     "containerservice",service_id=name+"-containerservice-"+consul_conf["env"],
     port=port,
     address=get_local_ip(),
     tags=["python","container_service",consul_conf["env"]]
 )
+    
 
 def get_service_address(consul_client,service_name,env):
     while True:
